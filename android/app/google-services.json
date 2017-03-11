@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1043179247777",
+    "firebase_url": "https://citizengo-690b8.firebaseio.com",
+    "project_id": "citizengo-690b8",
+    "storage_bucket": "citizengo-690b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043179247777:android:9b6f49c8769a2467",
+        "android_client_info": {
+          "package_name": "com.citizengo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043179247777-mkq3qdem2f24cadfo2b5uoqss3gm9okr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM3REgnFQmmFlywURm58VDj5lOIFzjbeE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

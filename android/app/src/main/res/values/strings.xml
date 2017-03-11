@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CitizenGo</string>
+    <string name="fb_app_id">184888958672899</string>
+    <string name="fb_login_protocol_scheme">fb07b9c8b004d34884e40b879e504096ae</string>
+</resources>
