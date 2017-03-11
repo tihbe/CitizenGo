@@ -7,8 +7,9 @@ import {
 } from 'react-native';
 
 import * as firebase from "firebase";
-//import { FBLogin, FBLoginManager } from 'react-native-facebook-login';
 import FireAuth from 'react-native-firebase-auth';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class LoginComponent extends Component {
 
@@ -16,26 +17,30 @@ export default class LoginComponent extends Component {
         super(props);
     }
     componentWillMount() {
-        FireAuth.facebookLogin();
-        // FBLoginManager.loginWithPermissions(["email", "user_friends"], function (error, data) {
-        //     if (!error) {
-        //         console.log("Login data: ", data);
-        //     } else {
-        //         console.log("Error: ", error);
-        //     }
-        // })
     }
     componentWillUnmount() {
     }
 
+    loginWithFacebook() {
+        FireAuth.facebookLogin();
+    }
+
+    logout() {
+        FireAuth.logout();
+    }
+
     render() {
-        var _this = this;
         return (
-            <View style={{ margin: 10 }}>
+            <View style={{ margin: 0 }}>
                 <Text style={styles.appname}>
                     CitizenGo
                 </Text>
-                
+                <Icon.Button onPress={this.loginWithFacebook} backgroundColor="#3b5998" 
+                    name={"facebook"} size={30} borderRadius={0}>
+                        <Text style={{fontFamily: 'Arial', fontSize: 15, 
+                        color: "#FFFFFF", fontWeight: "bold", marginLeft: 25}}>Se connecter avec Facebook</Text>
+                </Icon.Button>
+
             </View>
         );
     }
@@ -43,9 +48,9 @@ export default class LoginComponent extends Component {
 
 const styles = StyleSheet.create({
     appname: {
-        fontSize: 20,
+        fontSize: 70,
         textAlign: 'center',
-        margin: 10,
+        marginBottom: 60
     }
 });
 

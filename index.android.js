@@ -15,12 +15,13 @@ import {
 
 import * as firebase from "firebase";
 import {LoginComponent} from "./src/LoginComponent";
+import {StatsComponent} from "./src/StatsComponent";
 
 export default class CitizenGo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {isUserLoggedIn: false}
+    this.state = {isUserLoggedIn: false, user: null}
   }
 
   componentWillMount() {
@@ -30,7 +31,7 @@ export default class CitizenGo extends Component {
     this.removeFirebase();
   }
 
-  async initFirebase() {
+  initFirebase() {
     var self = this;
     firebase.initializeApp({
       apiKey: "AIzaSyBXw7B6tHHkQ78RHwA4lpg2jze0dd1o29g",
@@ -41,24 +42,20 @@ export default class CitizenGo extends Component {
     });
     firebase.auth().onAuthStateChanged(function(user) {
       self.setState({
-        isUserLoggedIn: user !== null
+        isUserLoggedIn: user !== null,
+        user: user
       })
     });
-    // firebase.database().ref("/user/0/Name").once("value", function(snap) {
-    //   self.setState({
-    //     txt: snap.val()
-    //   })
-    // })
   }
 
-  async removeFirebase() {
+  removeFirebase() {
     firebase.app().delete();
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.isUserLoggedIn ? <Text>User is logged In</Text> : <LoginComponent /> }
+        {this.state.isUserLoggedIn ? <StatsComponent user={this.state.user}/> : <LoginComponent /> }
       </View>
     );
   }
@@ -69,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: "#b7ff9e",
   }
 });
 
