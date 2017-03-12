@@ -7,13 +7,13 @@ import {
 } from 'react-native';
 
 import * as firebase from "firebase";
-//import bluetooth from "react-native-bluetooth-serial";
+import bluetooth from "react-native-bluetooth-serial";
 
 export default class StatsComponent extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { points: 0, kms: 0, initialPosition: 0 }
+        this.state = { points: 0, kms: 0, initialPosition: 0, bluetoothData: false, bluetoothList: 0 }
     }
 
     watchID = null;
@@ -21,6 +21,16 @@ export default class StatsComponent extends Component {
     componentDidMount() {
         var self = this;
         var { displayName, email, uid } = this.props.user;
+
+        self.setState({
+            bluetoothList: bluetooth.list().toString()
+        });
+        bluetooth.on("rawData", function(data) {
+            self.setState({
+                bluetoothData: data
+            })
+        })
+
         firebase.database().ref("/user/" + uid).update({
             Name: displayName,
             email: email
@@ -58,7 +68,9 @@ export default class StatsComponent extends Component {
                     Bonjour {displayName || ""} ! {'\n'}
                     Vous avez {this.state.points || 0} points. {'\n'}
                     Vous avez parcouru {this.state.kms || 0} kilomètres. {'\n'}
-                    Vous êtes: {this.state.lastPosition}
+                    Vous êtes: {this.state.initialPosition} {'\n'}
+                    bluetoothData: {this.state.bluetoothData} {'\n'}
+                    bluetoothList: {this.state.bluetoothList}
                 </Text>
                 <Text>
                 </Text>
