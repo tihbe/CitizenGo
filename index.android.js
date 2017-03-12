@@ -5,26 +5,27 @@
  */
 
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  Image
-} from 'react-native';
-
+import { AppRegistry } from 'react-native';
 import * as firebase from "firebase";
-import {LoginComponent} from "./src/LoginComponent";
-import {StatsComponent} from "./src/StatsComponent";
+import { LoginComponent } from "./src/LoginComponent";
+import { StatsComponent } from "./src/StatsComponent";
+import { Image, Dimensions, View } from 'react-native'
 
 export default class CitizenGo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {isUserLoggedIn: false, user: null}
+    this.state = { isUserLoggedIn: false, user: null, splashscreen: true }
   }
 
   componentWillMount() {
+    var self = this;
+    var hideSplashScreen = function() {
+      self.setState({
+        splashscreen: false
+      });
+    }
+    setTimeout(hideSplashScreen, 2000);
     this.initFirebase();
   }
   componentWillUnmount() {
@@ -40,7 +41,7 @@ export default class CitizenGo extends Component {
       storageBucket: "citizengo-690b8.appspot.com",
       messagingSenderId: "1043179247777"
     });
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged(function (user) {
       self.setState({
         isUserLoggedIn: user !== null,
         user: user
@@ -53,21 +54,16 @@ export default class CitizenGo extends Component {
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        {this.state.isUserLoggedIn ? <StatsComponent user={this.state.user}/> : <LoginComponent /> }
-      </View>
-    );
+    const window = Dimensions.get('window');
+
+    if (this.state.splashscreen) {
+      return (
+        <Image style={{ width: window.width, height: window.height, resizeMode: 'cover' }}
+          source={require('./src/images/splashscreen.png')} />
+        )
+    } else {
+      return this.state.isUserLoggedIn ? <StatsComponent user={this.state.user} /> : <LoginComponent />;
+    }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: "#b7ff9e",
-  }
-});
-
 AppRegistry.registerComponent('CitizenGo', () => CitizenGo);
