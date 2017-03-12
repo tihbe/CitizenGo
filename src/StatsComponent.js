@@ -3,6 +3,7 @@ import { Container, Header, Title, Button, Left, Right, Body, Icon, Text, Conten
 import * as firebase from "firebase";
 import bluetooth from "react-native-bluetooth-serial";
 import FireAuth from 'react-native-firebase-auth';
+import { Image } from 'react-native'
 
 var interval = 0;
 
@@ -10,7 +11,7 @@ export default class StatsComponent extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { points: 0, kms: 0, initialPosition: 0, bluetoothIsConnected: false }
+        this.state = { points: 0, kms: 0, initialPosition: 0, bluetoothIsConnected: false, avatarImg: null }
     }
 
     watchID = null;
@@ -27,19 +28,28 @@ export default class StatsComponent extends Component {
             })
         })
 
-        firebase.database().ref("/user/" + uid).update({
+        var userRef = firebase.database().ref("/user/" + uid);
+
+        userRef.update({
             Name: displayName,
             Email: email
         });
-        firebase.database().ref("/user/" + uid + "/Points").on("value", function (snap) {
-            self.setState({
-                points: snap.val()
-            });
-        })
-        firebase.database().ref("/user/" + uid + "/KmTotal").on("value", function (snap) {
-            self.setState({
-                kms: snap.val()
-            });
+
+        var updateFunction = function (snap) {
+            var objTmp = {};
+            objTmp[snap.key] = snap.val();
+            self.setState(objTmp);
+        }
+
+        userRef.on("child_changed", updateFunction);
+        userRef.on("child_added", updateFunction);
+
+        userRef.child("Level").on("value", function (levelSnap) {
+            firebase.database().ref("/avatar/" + (levelSnap.val() || 0) + "/img").once("value", function (avatar_snap) {
+                self.setState({
+                    avatarImg: "data:image/png;base64," + avatar_snap.val()
+                })
+            })
         })
 
 
@@ -47,7 +57,13 @@ export default class StatsComponent extends Component {
 
     recalcData() {
         /*
-        bluetooth.connect("00:15:83:35:76:77");
+        try {
+            bluetooth.connect("00:15:83:35:76:77");
+        } catch (exception) {
+            alert(exception);
+        }
+
+        
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 var initialPosition = JSON.stringify(position);
@@ -77,6 +93,7 @@ export default class StatsComponent extends Component {
     render() {
         var self = this;
         var { displayName, email, uid } = this.props.user;
+        var { avatarImg, Points, KmTotal, Level } = this.state;
 
         //                     Bonjour {displayName || ""} ! {'\n'}
         //             Vous avez {this.state.points || 0} points. {'\n'}
@@ -99,7 +116,8 @@ export default class StatsComponent extends Component {
                     </Right>
                 </Header>
                 <Content>
-                    <H1 style={{textAlign: "center", marginTop: 10}}>{self.getFirstName(displayName || "")}</H1>
+                    <H1 style={{ textAlign: "center", marginTop: 10 }}>{self.getFirstName(displayName || "")}</H1>
+                    {avatarImg == null ? null : <Image style={{ marginTop: 10, width: 125, height: 125, marginLeft: 125 }} source={{ uri: avatarImg, scale: 3 }} />}
                 </Content>
             </Container>
         );

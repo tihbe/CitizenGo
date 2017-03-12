@@ -15,19 +15,26 @@ export default class CitizenGo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { isUserLoggedIn: false, user: null, splashscreen: true }
+    this.state = { isUserLoggedIn: false, user: null, userWasFetched: false, splashscreen: true }
   }
 
   componentWillMount() {
     var self = this;
-    var hideSplashScreen = function() {
-      self.setState({
-        splashscreen: false
-      });
+
+    this.initFirebase();
+
+    var hideSplashScreen = function () {
+      if (self.state.userWasFetched) {
+        self.setState({
+          splashscreen: false
+        });
+      } else {
+        setTimeout(hideSplashScreen, 500);
+      }
     }
     setTimeout(hideSplashScreen, 2000);
-    this.initFirebase();
   }
+  
   componentWillUnmount() {
     this.removeFirebase();
   }
@@ -44,7 +51,8 @@ export default class CitizenGo extends Component {
     firebase.auth().onAuthStateChanged(function (user) {
       self.setState({
         isUserLoggedIn: user !== null,
-        user: user
+        user: user,
+        userWasFetched: true
       })
     });
   }
@@ -60,7 +68,7 @@ export default class CitizenGo extends Component {
       return (
         <Image style={{ width: window.width, height: window.height, resizeMode: 'cover' }}
           source={require('./src/images/splashscreen.png')} />
-        )
+      )
     } else {
       return this.state.isUserLoggedIn ? <StatsComponent user={this.state.user} /> : <LoginComponent />;
     }
